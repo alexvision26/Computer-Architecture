@@ -7,7 +7,9 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.reg = [0] * 8
+        self.pc = 0
+        self.ram = [0] * 256
 
     def load(self):
         """Load a program into memory."""
@@ -62,4 +64,37 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        LDI = 0b10000010
+        PRN = 0b01000111
+        HALT = 0b00000001
+
+        pc = 0
+        running = True
+        while running:
+            command = self.ram[pc]
+
+            if command == LDI:
+                reg = self.ram[pc + 1]
+                num_to_save = self.ram[pc + 2]
+                self.reg[reg] = num_to_save
+                
+                pc += 2
+
+            if command == PRN:
+                reg = self.ram[pc + 1]
+                print(self.reg[reg])
+
+                pc += 1
+
+            if command == HALT:
+                running = False
+
+            pc += 1
+
+
+    def ram_read(self, address):
+        return self.ram[address]
+
+    def ram_write(self, address, value):
+        self.ram[address] = value
+        return f'Value stored.'
