@@ -33,6 +33,9 @@ class CPU:
             print(f'{sys.argv[0]}: {sys.argv[1]} file was not found')
             sys.exit()
 
+        # for x in self.ram:
+        #     print(bin(x))
+
 
         # For now, we've just hardcoded a program:
 
@@ -87,10 +90,12 @@ class CPU:
         PRN = 0b01000111
         MUL = 0b10100010
         HALT = 0b00000001
-        POP = 0b1000
-        PUSH = 0b111
-        ADD = 0b110
-        PRINT_REG = 0b101
+        POP = 0b01000110
+        # SAVE = 0b100
+        PUSH = 0b01000101
+        # ADD = 0b110
+        # PRINT_REG = 0b101
+        # PRINT_NUM = 0b00000011
 
         self.reg[7] = 0xA
 
@@ -99,34 +104,59 @@ class CPU:
         while running:
             command = self.ram[pc]
 
+            # print(command)
+
+            # print("Command: ", bin(command))
+
             if command == LDI:
                 reg = self.ram[pc + 1]
                 num_to_save = self.ram[pc + 2]
                 self.reg[reg] = num_to_save
+                # print('ran')
                 
                 pc += 2
 
             if command == PRN:
+                # print('ran')
                 reg = self.ram[pc + 1]
                 print(self.reg[reg])
 
                 pc += 1
 
+            # if command == PRINT_NUM:
+            #     num_to_print = self.ram[pc + 1]
+            #     print(num_to_print)
+            #     pc += 1
+
+            # if command == SAVE:
+            #     reg = self.ram[pc + 1]
+            #     num_to_save = self.ram[pc + 2]
+            #     self.reg[reg] = num_to_save
+
+            #     pc += 2
+
+            # if command == PRINT_REG:
+            #     reg_index = self.ram[pc + 1]
+            #     print(self.reg[reg_index])
+            #     pc += 1
+
             if command == MUL:
                 regA = self.ram[pc + 1]
                 regB = self.ram[pc + 2]
-
                 self.alu('MUL', regA, regB)
-                print(self.reg[regA])
 
-            if command == ADD:
-                regA = self.ram[pc + 1]
-                regB = self.ram[pc + 2]
+                pc += 2
 
-                self.alu('ADD', regA, regB)
-                print(self.reg[regA])
+
+            # if command == ADD:
+            #     regA = self.ram[pc + 1]
+            #     regB = self.ram[pc + 2]
+
+            #     self.alu('ADD', regA, regB)
+            #     # print(self.reg[regA])
 
             if command == PUSH:
+                # print('ran push')
                 self.reg[7] -= 1
                 reg = self.ram[pc + 1]
                 value = self.reg[reg]
@@ -150,8 +180,9 @@ class CPU:
 
             pc += 1
 
-        for x in self.reg:
-            print(x)
+        # for x in self.reg:
+        #     # if x != 0:
+        #     print(x)
 
 
 
