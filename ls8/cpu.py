@@ -71,6 +71,21 @@ class CPU:
 
             if self.reg[reg_a] > self.reg[reg_b]:
                 self.flag = 0b00000010
+        elif op == 'MOD':
+            # self.reg[reg_a] = self.reg[reg_a] 
+            pass
+        elif op == 'OR':
+            self.reg[reg_a] = self.reg[reg_a] | self.reg[reg_b]
+        elif op == 'XOR':
+            pass
+        elif op == 'SHL':
+            pass
+        elif op == 'SHR':
+            pass
+        elif op == 'AND':
+            self.reg[reg_a] = self.reg[reg_a] & self.reg[reg_b]
+        elif op == 'NOT':
+            self.reg[reg_a] = ~self.reg[reg_a]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -98,18 +113,27 @@ class CPU:
         """Run the CPU."""
         LDI = 0b10000010
         PRN = 0b01000111
-        MUL = 0b10100010
         HALT = 0b00000001
         POP = 0b01000110
         CALL = 0b01010000
         RET = 0b00010001
         SAVE = 0b00000100
         PUSH = 0b01000101
-        ADD = 0b10100000
         JEQ = 0b01010101
         JMP = 0b01010100
-        CMP = 0b10100111
         JNE = 0b01010110
+
+        #Math Ops
+        OR = 0b10101010
+        MUL = 0b10100010
+        ADD = 0b10100000
+        CMP = 0b10100111
+        XOR = 0b10101011
+        SHL = 0b10101100
+        SHR = 0b10101101
+        MOD = 0b10100100
+        AND = 0b10101000
+        NOT = 0b01101001
 
         # PRINT_REG = 0b101
         # PRINT_NUM = 0b00000011
