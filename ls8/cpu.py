@@ -91,13 +91,15 @@ class CPU:
         MUL = 0b10100010
         HALT = 0b00000001
         POP = 0b01000110
-        # SAVE = 0b100
+        CALL = 0b01010000
+        RET = 0b00010001
+        SAVE = 0b00000100
         PUSH = 0b01000101
-        # ADD = 0b110
+        ADD = 0b10100000
         # PRINT_REG = 0b101
         # PRINT_NUM = 0b00000011
 
-        self.reg[7] = 0xA
+        self.reg[7] = 0xF4
 
         pc = 0
         running = True
@@ -114,26 +116,39 @@ class CPU:
                 self.reg[reg] = num_to_save
                 # print('ran')
                 
-                pc += 2
+                pc += 3
 
             if command == PRN:
                 # print('ran')
                 reg = self.ram[pc + 1]
                 print(self.reg[reg])
 
-                pc += 1
+                pc += 2
 
-            # if command == PRINT_NUM:
-            #     num_to_print = self.ram[pc + 1]
-            #     print(num_to_print)
-            #     pc += 1
+            if command == SAVE:
+                reg = self.ram[pc + 1]
+                num_to_save = self.ram[pc + 2]
+                self.reg[reg] = num_to_save
 
-            # if command == SAVE:
-            #     reg = self.ram[pc + 1]
-            #     num_to_save = self.ram[pc + 2]
-            #     self.reg[reg] = num_to_save
+                pc += 3
 
-            #     pc += 2
+            if command == CALL:
+                reg = self.ram[pc + 1]
+                address = self.reg[reg]
+                return_address = pc + 2
+                self.reg[7] -= 1
+                sp = self.reg[7]
+
+                self.ram[sp] = return_address
+
+                pc = address
+
+            if command == RET:
+                sp = self.reg[7]
+                return_address = self.ram[sp]
+                self.reg[7] += 1
+
+                pc = return_address
 
             # if command == PRINT_REG:
             #     reg_index = self.ram[pc + 1]
@@ -145,15 +160,17 @@ class CPU:
                 regB = self.ram[pc + 2]
                 self.alu('MUL', regA, regB)
 
-                pc += 2
+                pc += 3
 
 
-            # if command == ADD:
-            #     regA = self.ram[pc + 1]
-            #     regB = self.ram[pc + 2]
+            if command == ADD:
+                regA = self.ram[pc + 1]
+                regB = self.ram[pc + 2]
 
-            #     self.alu('ADD', regA, regB)
-            #     # print(self.reg[regA])
+                self.alu('ADD', regA, regB)
+                # print(self.reg[regA])
+
+                pc += 3
 
             if command == PUSH:
                 # print('ran push')
@@ -163,7 +180,7 @@ class CPU:
                 sp = self.reg[7]
                 self.ram[sp] = value
 
-                pc += 1
+                pc += 2
 
             if command == POP:
                 sp = self.reg[7]
@@ -173,12 +190,12 @@ class CPU:
                 self.reg[reg] = value
                 self.reg[7] += 1
 
-                pc += 1
+                pc += 2
 
             if command == HALT:
                 running = False
 
-            pc += 1
+            # pc += 1
 
         # for x in self.reg:
         #     # if x != 0:
